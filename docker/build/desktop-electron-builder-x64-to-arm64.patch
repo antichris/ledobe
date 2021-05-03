@@ -1,0 +1,30 @@
+## This Source Code Form is subject to the terms of the Mozilla Public
+## License, v. 2.0. If a copy of the MPL was not distributed with this
+## file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+diff --git a/electron-builder-nightly.yml b/electron-builder-nightly.yml
+index 28758f46..174486b0 100644
+--- a/electron-builder-nightly.yml
++++ b/electron-builder-nightly.yml
+@@ -17,7 +17,7 @@ linux:
+   target:
+     - target: AppImage
+       arch:
+-        - x64
++        - arm64
+ 
+ win:
+   artifactName: ${name}-${version}-${os}-${arch}.${ext}
+diff --git a/electron-builder.yml b/electron-builder.yml
+index 48bebd76..c6e5b81c 100644
+--- a/electron-builder.yml
++++ b/electron-builder.yml
+@@ -28,7 +28,7 @@ linux:
+   target:
+     - target: AppImage
+       arch:
+-        - x64
++        - arm64
+ 
+ win:
+   artifactName: ${name}-${version}-${os}-${arch}.${ext}

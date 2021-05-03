@@ -1,0 +1,48 @@
+#!/bin/sh
+
+## This Source Code Form is subject to the terms of the Mozilla Public
+## License, v. 2.0. If a copy of the MPL was not distributed with this
+## file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+## Outputs the absolute path when dirname exists, returns with error otherwise.
+resolve() { readlink -f "$1"; } ## (relative_path)
+## Outputs value of variable referenced by name.
+ref() { eval echo "\$${1}"; } ## (name)
+## Sets value of variable referenced by name.
+refSet() { eval "${1}='$( printf %s "$2" | sed "s/'/'\\\\''/g")'"; } ## (name value)
+
+selfDir=$(dirname "$(resolve "$(command -v "$0")")")
+: "${LEDOBE_DIR_BASE:="$(dirname "$selfDir")"}"
+
+: "${LEDOBE_DIR_HOME:="${LEDOBE_DIR_BASE}/home"}"
+: "${LEDOBE_DIR_BUILD:="${LEDOBE_DIR_BASE}/build"}"
+
+: "${LEDOBE_ID_USER:=$(id -u "$(logname)")}"
+: "${LEDOBE_ID_GROUP:=$(id -g "$(logname)")}"
+
+mustChown=$(test "$LEDOBE_ID_USER" = "$(id -u)" || printf uh-huh)
+for dir in BASE HOME BUILD; do
+	path=$(ref "LEDOBE_DIR_${dir}" )
+	if ! resolved=$(resolve "$path"); then
+		printf 'Could not resolve the %s directory "%s"\n' "$dir" "$path"
+		exit 1
+	fi
+	if [ ! -d "$resolved" ]; then
+		mkdir "$resolved" || exit
+		if [ "$mustChown" ]; then
+			chown "${LEDOBE_ID_USER}:${LEDOBE_ID_GROUP}" "$resolved"
+		fi
+	fi
+	refSet "resolved_${dir}" "$resolved"
+done
+
+## The `resolved_*` variables get set above procedurally.
+# shellcheck disable=SC2154
+docker run -it --rm \
+	-v "${resolved_HOME}:/mnt/home" \
+	-v "${resolved_BUILD}:/build" \
+	-e "TERM=${TERM}" \
+	-e "USER_ID=${LEDOBE_ID_USER}" \
+	-e "GROUP_ID=${LEDOBE_ID_GROUP}" \
+	ledobe:latest \
+	"$@"

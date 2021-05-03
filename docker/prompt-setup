@@ -1,0 +1,75 @@
+#!/bin/sh
+
+## This Source Code Form is subject to the terms of the Mozilla Public
+## License, v. 2.0. If a copy of the MPL was not distributed with this
+## file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+usage=$(cat) <<-***
+Usage:  $0 BASHRCFILE
+
+Alter a .bashrc file to enhance the shell prompt display.
+
+  --help	display this help and exit
+
+Locates the PS1 prompt strings in a .bashrc file, enhancing them with the
+output of last exit/error status and current time, and adds PROMPT_COMMAND and
+GIT_PS1_* variables, to add Git status to the prompt and configure it.
+***
+
+dieWithUsage() {
+	[ "$2" ] && printf %s\\n "$2" >&2
+	printf '%s\n' "$usage"
+	exit "${1:-0}"
+}
+for arg; do
+	[ "$arg" = '--help' ] && dieWithUsage
+done
+
+if [ ! -f "$1" ]; then
+	dieWithUsage 1 'No BASHRCFILE specified'
+fi
+bashrc=$1
+
+promptSetupComment='## The following lines have been added by the prompt-setup script.'
+
+if grep --quiet "$promptSetupComment" "$bashrc"; then
+	printf 'The file "%s" appears to have already been altered\n' "$bashrc"
+	exit
+fi
+
+## Nothing should be expanding here, the '$'s are as literal as can be.
+# shellcheck disable=SC2016
+sed -Ei '
+	## For each line that starts with PS1=<singlequote>
+	/^\s+PS1='\''/{
+		## Move the dollar sign suffix to a separate variable
+		s/(^\s+)(\S.+)(\\\$ )('\'')$/\1\2\4\n\1PS1_suffix=\4\\n\3\4/;
+		## Prefix with last exit status (if non-zero) and clock
+		s/(^[^$]+)(\$)/\1$(e=$?;[ "$e" -eq 0 ]||echo "$e|")$(date +%T) \2/;
+		## For each line that contains "\[" (shell prefix for ANSI escape sequences)
+		/\\\[/{
+			## Dim the prompt dollar sign
+			s/(_.+)(\\\$)/\1\\[\\033[2m\\]\2\\[\\033[0m\\]/
+			## Set color to red for error number (bright) and its separator (dim)
+			s/(^.+o ")(\$e)(\|)(")/\1\\[\\033[1;31m\\]\2\\[\\033[2m\\]\3\\[\\033[0m\\]\4/;
+			## Dim the clock
+			s/(\$[^)]+\))( )/\\[\\033[2m\\]\1\\[\\033[0m\\]\2/;
+			## Add variable to enable colors in Git prompt
+			s/(^\s+)(\S.+$)/&\n\1GIT_PS1_SHOWCOLORHINTS=1/;
+		}
+	}' "$bashrc"
+
+cat >>"$bashrc" <<-***
+
+	$promptSetupComment
+	GIT_PS1_SHOWDIRTYSTATE=1
+	GIT_PS1_SHOWSTASHSTATE=1
+	GIT_PS1_SHOWUNTRACKEDFILES=1
+	GIT_PS1_SHOWUPSTREAM='verbose name'
+	GIT_PS1_DESCRIBE_STYLE='branch'
+	GIT_PS1_HIDE_IF_PWD_IGNORED=1
+
+	PROMPT_COMMAND="__git_ps1 '\$PS1' '\$PS1_suffix'"
+	unset PS1_suffix
+	## End of content added by prompt-setup.
+***

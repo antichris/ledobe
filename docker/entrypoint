@@ -1,0 +1,59 @@
+#!/bin/sh
+
+## This Source Code Form is subject to the terms of the Mozilla Public
+## License, v. 2.0. If a copy of the MPL was not distributed with this
+## file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+: "${USER_ID:=$(stat -c%u .)}"
+: "${GROUP_ID:=$(stat -c%g .)}"
+: "${GROUP_NAME:=${USER_NAME:=ledobe}}"
+
+groupadd -g "$GROUP_ID" "$GROUP_NAME" || exit
+useradd -lmg "$GROUP_NAME" -u "$USER_ID" "$USER_NAME" || exit
+home="$(getent passwd "$USER_ID" | cut -d: -f6)"
+
+mount=/mnt/home
+## Move the all the newly-created home dir contents to the mounted dir.
+find "$home" -mindepth 1 -maxdepth 1 -exec \
+	mv -ut "$mount" {} +
+## Substitute the created home dir with the mounted one.
+rm -rf "$home"
+ln -s "$mount" "$home"
+
+## A recursive "mv -u", like "cp -ru" but moving instead of copying.
+mvru() {
+	if [ ! -d "$1" ] || [ ! -e "$2" ]; then
+		mv -u "$1" "$2" || exit
+		return
+	fi
+	for entry in "$1/"* "$1/."[!.]* "$1/.."?*; do
+		if [ -e "$entry" ]; then
+			mvru "$entry" "$2/${entry##"$1/"}"
+		fi
+	done
+}
+
+## Add to home dir what was created for it during the image build.
+mvru /home/.ledobe "$home"
+
+## Force everything in the home dir to be owned by the user.
+## The trailing slash is needed because we symlinked the path earlier.
+find "${home}/" -not -user "$USER_ID" -exec \
+	chown "$USER_ID:$GROUP_ID" {} +
+
+## Update build dir with what was created for it during the image build.
+mvru "${home}/build" /build
+
+# shellcheck disable=SC1091
+## Set up NPM to work off the home dir instead of node installation dir.
+HOME="$home" . /etc/profile.d/home-npm.sh
+
+execGosu() { exec gosu "$USER_ID" "$@"; }
+
+if [ "$(command -v "$1")" ]; then
+	execGosu "$@"
+elif [ $# -eq 1 ]; then
+	execGosu sh -c "$1"
+else
+	echo "$@" | execGosu sh -s
+fi
