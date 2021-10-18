@@ -116,7 +116,7 @@ RUN set -x \
 ##  Essential build tools.
     cmake=3.16.3-1ubuntu1 \
     g++=4:9.3.0-1ubuntu2 \
-    git=1:2.25.1-1ubuntu3.1 \
+    git=1:2.25.1-1ubuntu3.2 \
     make=4.2.1-1.2 \
     openjdk-8-jre-headless=8u292-b10-0ubuntu1~20.04 \
     pkg-config=0.29.1-0ubuntu4 \
