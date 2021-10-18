@@ -2,6 +2,14 @@
 
 This project adheres to [Semantic Versioning][semver2].
 
+## 0.1.3
+
+### Updated
+
+- `ca-certificates` package to `20210119~20.04.2`
+- `git` package to `1:2.25.1-1ubuntu3.2`
+
+
 ## 0.1.2
 
 ### Updated
