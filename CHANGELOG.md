@@ -2,6 +2,15 @@
 
 This project adheres to [Semantic Versioning][semver2].
 
+## 0.1.4
+
+### Added
+
+- Two more sections to `README`:
+	- Scope
+	- Troubleshooting
+
+
 ## 0.1.3
 
 ### Updated
