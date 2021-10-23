@@ -12,6 +12,12 @@ At this point only ARM64 Linux is supported out of the box.
 
 With some tinkering you should be able to make it work for other platforms. Consider submitting a pull request, if you manage to also come up with a good workflow for multiple platforms.
 
+### Scope
+
+The scope of this project is limited to providing a stable and isolated **build environment**. You are welcome to contribute reports and/or solutions for any issues that you encounter during builds.
+
+Any issue that you encounter during the runtime of the build artifacts (see [Troubleshooting]) falls outside the scope of this project, unless you are able to trace it back to a specific problem with this build environment. In which case, as stated previously, your contribution of issue reports/resolutions is very welcome.
+
 
 ## Installation
 
@@ -123,6 +129,30 @@ The following sections contain a brief overview of the explicit targets currentl
 	Ledger Core Library cross-platform C++ bindings for NodeJS. ([GitHub][gh-coreNPM])
 
 
+## Troubleshooting
+
+Even though the runtime portion of Ledger Live is outside the scope of this project, users have been encountering the same problems frequently enough to warrant a few words on dealing with them.
+
+Unless you can also provide solutions that must be a part of this build environment, please, do not create additional issue reports for the Ledger Live runtime problems outlined below.
+
+1. ### Missing `libz.so`
+
+	```text
+	error while loading shared libraries: libz.so: cannot open shared object file: No such file or directory
+	```
+
+	Likely caused by [AppImage/AppImageKit#964]. You are welcome to contribute to its resolution.
+
+	Two workarounds are currently known:
+
+	- symlink `/lib/aarch64-linux-gnu/libz.so.1` to `libz.so` in the same directory, or
+	- install the `zlib1g-dev` package (or the equivalent on your distribution).
+
+2. ### Unable to connect the physical device
+
+	This issue with Ledger Live seems to be [common enough][undetected] for their official support site to offer [tips on dealing with it][tips]. If none of those work for you, consider contributing your own solution to Ledger Live.
+
+
 ## License
 
 The source code of this project is released under [Mozilla Public License Version 2.0][mpl]. See [LICENSE](LICENSE).
@@ -131,6 +161,9 @@ The source code of this project is released under [Mozilla Public License Versio
 	"Ledger Live: Most trusted & secure crypto wallet | Ledger"
 [ledgerhq]: https://github.com/LedgerHQ
 	"Ledger"
+
+[Troubleshooting]: #troubleshooting
+	"Troubleshooting"
 
 [jobs]: #jobs
 	"Operation ❭ Details ❭ Jobs"
@@ -144,6 +177,13 @@ The source code of this project is released under [Mozilla Public License Versio
 
 [rpi-swap]: https://nebl.io/neblio-university/enabling-increasing-raspberry-pi-swap/
 	"Enabling & Increasing Raspberry Pi Swap - Neblio"
+
+[AppImage/AppImageKit#964]: https://github.com/AppImage/AppImageKit/issues/964
+	"ARM and ARM64 AppImages link to libz.so instead of libz.so.1 · Issue #964 · AppImage/AppImageKit"
+[undetected]: https://github.com/LedgerHQ/ledger-live-desktop/issues?q=is:issue+device+not+detected
+	"Search: device not detected - Issues· LedgerHQ/ledger-live-desktop"
+[tips]: https://support.ledger.com/hc/en-us/articles/115005165269-Fix-connection-issues
+	"Fix USB connection issues with Ledger Live – Ledger Support"
 
 [mpl]: https://www.mozilla.org/en-US/MPL/2.0/
 	"Mozilla Public License, version 2.0"
