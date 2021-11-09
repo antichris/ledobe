@@ -2,6 +2,13 @@
 
 This project adheres to [Semantic Versioning][semver2].
 
+## 0.1.5
+
+### Updated
+
+- `libudev-dev` package to `245.4-4ubuntu3.13`
+
+
 ## 0.1.4
 
 ### Added
