@@ -33,7 +33,7 @@ FROM pre-dl AS sbt-dl
 ENV PATH="${PATH}:${OPTDIR}/sbt/bin"
 
 RUN apt-get install -y --no-install-suggests --no-install-recommends \
-    openjdk-8-jre-headless=8u292-b10-0ubuntu1~20.04
+    openjdk-8-jre-headless=8u312-b07-0ubuntu1~20.04
 
 ARG SBT_VER=1.4.9
 
@@ -123,7 +123,7 @@ RUN set -x \
     g++=4:9.3.0-1ubuntu2 \
     git=1:2.25.1-1ubuntu3.2 \
     make=4.2.1-1.2 \
-    openjdk-8-jre-headless=8u292-b10-0ubuntu1~20.04 \
+    openjdk-8-jre-headless=8u312-b07-0ubuntu1~20.04 \
     pkg-config=0.29.1-0ubuntu4 \
     python-is-python3=3.8.2-4 \
 ##  Ledger Live build dependecies.
