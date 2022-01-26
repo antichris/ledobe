@@ -9,6 +9,8 @@ FROM ubuntu:20.04 AS base
 ##
 FROM base AS pre-dl
 
+ENV DEBIAN_FRONTEND="noninteractive"
+
 ##  Download stages depend on package info to continue installing stuff.
 #   hadolint ignore=DL3009
 RUN set -x \
