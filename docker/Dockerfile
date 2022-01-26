@@ -130,7 +130,7 @@ RUN set -x \
     libqt5websockets5-dev=5.12.8-0ubuntu1 \
     libudev-dev=245.4-4ubuntu3.15 \
     libusb-1.0-0-dev=2:1.0.23-2build1 \
-    qtbase5-dev=5.12.8+dfsg-0ubuntu1 \
+    qtbase5-dev=5.12.8+dfsg-0ubuntu2.1 \
 ##  Convenience utils specific to this Docker environment.
     bash-completion=1:2.10-1ubuntu1 \
     gosu=1.10-1ubuntu0.20.04.1 \
