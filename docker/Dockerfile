@@ -35,12 +35,12 @@ ENV PATH="${PATH}:${OPTDIR}/sbt/bin"
 RUN apt-get install -y --no-install-suggests --no-install-recommends \
     openjdk-8-jre-headless=8u312-b07-0ubuntu1~20.04
 
-ARG SBT_VER=1.4.9
+ARG SBT_VER=0.13.17
 
 ENV ARCHIVE="sbt-${SBT_VER}.tgz"
 RUN wget --progress=dot:giga "https://github.com/sbt/sbt/releases/download/v${SBT_VER}/${ARCHIVE}"
 
-ARG SBT_SHA=95468119f7641499367330a60a4b8a6211e6ea7f8bde7d647c67b19dd8fddb6e
+ARG SBT_SHA=25f782ccb2ad6d54e13ce6cec0afa3d2328874c508d68ee34e2f742e99f2c847
 
 ##  printf can't fail and even if, sha256sum would immediately follow.
 #   hadolint ignore=DL4006
@@ -103,7 +103,6 @@ COPY --from=node-dl --chown=0:0 "$OPTDIR" "$OPTDIR"
 COPY --from=sbt-dl --chown=0:0 "$OPTDIR" "$OPTDIR"
 COPY --from=sbt-dl /root/.sbt "${HOME}/.sbt"
 COPY --from=sbt-dl /root/.ivy2 "${HOME}/.ivy2"
-COPY --from=sbt-dl /root/.cache/coursier "${HOME}/.cache/coursier"
 
 COPY --from=prompt-setup /etc/skel/.bashrc /etc/skel/
 COPY --chown=0:0 npmrc /etc/skel/.npmrc
