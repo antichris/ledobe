@@ -134,7 +134,7 @@ RUN set -x \
 ##  Convenience utils specific to this Docker environment.
     bash-completion=1:2.10-1ubuntu1 \
     gosu=1.10-1ubuntu0.20.04.1 \
-    openssh-client=1:8.2p1-4ubuntu0.2 \
+    openssh-client=1:8.2p1-4ubuntu0.4 \
 &&  rm -rf /var/lib/apt/lists/* \
 &&  git config -f /etc/skel/.gitconfig \
     user.name 'Ledger DoBE' \
