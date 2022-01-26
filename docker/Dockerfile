@@ -83,6 +83,9 @@ RUN set -x \
 #   RUN npm install --global npm
 RUN npm install --global yarn@1.22.17
 
+##  Create a directory to be used later for user-local NPM installations.
+RUN mkdir -p /.npm/bin
+
 ##
 ## Prompt setup stage.
 ##
@@ -107,6 +110,7 @@ COPY --from=sbt-dl /root/.ivy2 "${HOME}/.ivy2"
 COPY --from=prompt-setup /etc/skel/.bashrc /etc/skel/
 COPY --chown=0:0 npmrc /etc/skel/.npmrc
 COPY --chown=0:0 home-npm.sh /etc/profile.d/
+COPY --from=node-dl /.npm "${HOME}/.npm"
 
 COPY build "${HOME}/build"
 COPY entrypoint /usr/bin/entrypoint
