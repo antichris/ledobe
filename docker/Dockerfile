@@ -81,7 +81,7 @@ RUN set -x \
 
 ##  XXX Enable after react is bumped to ^17.0.1 in @ledgerhq/live-common.
 #   RUN npm install --global npm
-RUN npm install --global yarn@1.22.10
+RUN npm install --global yarn@1.22.17
 
 ##
 ## Prompt setup stage.
