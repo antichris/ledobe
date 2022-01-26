@@ -2,10 +2,12 @@
 ## License, v. 2.0. If a copy of the MPL was not distributed with this
 ## file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+FROM ubuntu:20.04 AS base
+
 ##
 ##  Pre-download stage (common to all download stages).
 ##
-FROM ubuntu:20.04 AS pre-dl
+FROM base AS pre-dl
 
 ##  Download stages depend on package info to continue installing stuff.
 #   hadolint ignore=DL3009
@@ -80,7 +82,7 @@ RUN npm install --global yarn@1.22.10
 ##
 ## Prompt setup stage.
 ##
-FROM ubuntu:20.04 AS prompt-setup
+FROM base AS prompt-setup
 
 COPY prompt-setup /
 RUN /prompt-setup /etc/skel/.bashrc
@@ -106,7 +108,7 @@ COPY --chown=0:0 home-npm.sh /etc/profile.d/
 COPY build "${HOME}/build"
 COPY entrypoint /usr/bin/entrypoint
 
-FROM ubuntu:20.04 AS final
+FROM base AS final
 
 RUN set -x \
 &&  apt-get update \
