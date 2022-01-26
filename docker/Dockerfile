@@ -19,7 +19,7 @@ RUN set -x \
 &&  apt-get update \
 &&  apt-get install -y --no-install-suggests --no-install-recommends \
     ca-certificates=20210119~20.04.2 \
-    wget=1.20.3-1ubuntu1
+    wget=1.20.3-1ubuntu2
 
 ENV OPTDIR=/usr/local/lib
 
