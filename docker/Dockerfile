@@ -4,6 +4,8 @@
 
 FROM ubuntu:20.04 AS base
 
+ENV TZ="Etc/UTC"
+
 ##
 ##  Pre-download stage (common to all download stages).
 ##
@@ -115,7 +117,6 @@ FROM base AS final
 RUN set -x \
 &&  apt-get update \
 &&  DEBIAN_FRONTEND="noninteractive" \
-    TZ="Etc/UTC" \
     apt-get install -y --no-install-suggests --no-install-recommends \
 ##  Essential build tools.
     cmake=3.16.3-1ubuntu1 \
