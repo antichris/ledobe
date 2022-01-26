@@ -59,14 +59,14 @@ ENV PATH="${PATH}:${OPTDIR}/node/bin"
 RUN apt-get install -y --no-install-suggests --no-install-recommends \
     xz-utils=5.2.4-1ubuntu1
 
-ARG NODE_VER=12.22.1
+ARG NODE_VER=14.18.3
 ARG NODE_ARCH=arm64
 
 ENV DIR="node-v${NODE_VER}-linux-${NODE_ARCH}"
 ENV ARCHIVE="${DIR}.tar.xz"
 RUN wget --progress=dot:giga "https://nodejs.org/dist/v${NODE_VER}/${ARCHIVE}"
 
-ARG NODE_SHA=65145e6c2aa047ee5f83aadf9546116a6da70c21a649ed5f24dce412d2c202dc
+ARG NODE_SHA=ded5c233cc107c322f3a21935d53945880adfb5d7a0994fc94ee51fdf2e5a805
 
 ##  printf can't fail and even if, sha256sum would immediately follow.
 ##  The pre-dl stage already set WORKDIR.
