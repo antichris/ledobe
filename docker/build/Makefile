@@ -155,7 +155,8 @@ find ${1} \
 		-path ${1}/api -or \
 		-path ${1}/jni \
 	\) -prune -or \
-	-type f -print
+	-type f -print \
+	2> /dev/null
 endef
 
 ##	File system dependency on core lib sources (without Djinni output).
