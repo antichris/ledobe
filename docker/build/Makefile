@@ -184,8 +184,7 @@ ${coreLibGitHEAD}:
 	git clone --recurse-submodules https://github.com/LedgerHQ/lib-ledger-core.git ${dirCoreLib}
 ${coreLibGit}: ${coreLibGitHEAD}
 	${gitCoreLib} checkout -f ${vCoreLib}
-##	TODO Wtf is going on with libuv?
-#	${gitCoreLib} submodule init
+	${gitCoreLib} submodule init
 	${gitCoreLib} submodule update
 	$(call rmrf,$(@D))
 	$(call mark,$@)
