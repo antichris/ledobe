@@ -85,6 +85,11 @@ make
 to start building Ledger Live components. A bunch of make [targets] have recipes to make it way easier to build them, see the relevant section below.
 
 
+#### Switching versions
+
+The included `Makefile` has component versions listed as variables near the top. If you change any of those variables to a different commit-ish (tag, branch, exact commit, etc.) in the Git history of the corresponding component, `make` will automatically check out the relevant commit and rebuild the component at that version the next time you run it.
+
+
 #### Jobs
 
 Concurrent execution can speed up things tremendously. If you have sufficient memory (both physical and swap), you should increase `make` jobs up to the max threads that your device can handle. On a Raspberry Pi 4B that would be 4:

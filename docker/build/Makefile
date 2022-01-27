@@ -13,7 +13,7 @@ ifdef SHVERBOSE
 .SHELLFLAGS := -x ${.SHELLFLAGS}
 endif
 
-## TODO Rebuild when any of the versions change.
+##	These values switch component versions. Will trigger rebuilds when changed.
 vDesktop := 2.26.1
 vCoreLib := 3.5.4
 vCoreNPM := 6.11.3
@@ -36,11 +36,11 @@ artifact := ${dirDesktop}/dist/ledger-live-desktop-${vDesktop}-linux-arm64.AppIm
 coreLib := ${dirCoreLibDist}/libledger-core.so
 nodePlugin := ${dirCoreNPM}/build/Release/ledger-core-node.node
 
-desktopGit := ${dirDesktop}/.git/HEAD
-coreLibGit := ${dirCoreLib}/.git/HEAD
-coreNPMGit := ${dirCoreNPM}/.git/HEAD
-
 dep := ${dirRoot}/.dep/
+
+desktopGit := ${dep}desktop-v/${vDesktop}
+coreLibGit := ${dep}coreLib-v/${vCoreLib}
+coreNPMGit := ${dep}coreNPM-v/${vCoreNPM}
 
 ##	If a patch cannot be reversed, it MUST apply, or things are broken.
 define patch
@@ -168,21 +168,34 @@ ${dep}coreLibSrc: ${coreLibGit} $(shell $(call findCoreSrc,${dirCoreLibSrc}))
 	$(call mark,$@)
 
 
-${desktopGit}:
+desktopGitHEAD := ${dirDesktop}/.git/HEAD
+coreLibGitHEAD := ${dirCoreLib}/.git/HEAD
+coreNPMGitHEAD := ${dirCoreNPM}/.git/HEAD
+
+${desktopGitHEAD}:
 	git clone https://github.com/LedgerHQ/ledger-live-desktop.git ${dirDesktop}
-	git -C ${dirDesktop} checkout v${vDesktop}
+${desktopGit}: ${desktopGitHEAD}
+	git -C ${dirDesktop} checkout -f v${vDesktop}
+	$(call rmrf,$(@D))
+	$(call mark,$@)
 
 gitCoreLib := git -C ${dirCoreLib}
-${coreLibGit}:
+${coreLibGitHEAD}:
 	git clone --recurse-submodules https://github.com/LedgerHQ/lib-ledger-core.git ${dirCoreLib}
-	${gitCoreLib} checkout ${vCoreLib}
+${coreLibGit}: ${coreLibGitHEAD}
+	${gitCoreLib} checkout -f ${vCoreLib}
 ##	TODO Wtf is going on with libuv?
 #	${gitCoreLib} submodule init
 	${gitCoreLib} submodule update
+	$(call rmrf,$(@D))
+	$(call mark,$@)
 
-${coreNPMGit}:
+${coreNPMGitHEAD}:
 	git clone https://github.com/LedgerHQ/lib-ledger-core-node-bindings.git ${dirCoreNPM}
-	git -C ${dirCoreNPM} checkout ${vCoreNPM}
+${coreNPMGit}: ${coreNPMGitHEAD}
+	git -C ${dirCoreNPM} checkout -f ${vCoreNPM}
+	$(call rmrf,$(@D))
+	$(call mark,$@)
 
 
 ##	An empty rule to avoid implicit rule search.
