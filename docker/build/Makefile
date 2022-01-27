@@ -18,6 +18,8 @@ vDesktop := 2.26.1
 vCoreLib := 3.5.4
 vCoreNPM := 6.11.3
 
+coreLibCmakeOptions := -DBUILD_TESTS=OFF
+
 dirRoot := ${PWD}
 dirDesktop := ${dirRoot}/desktop
 dirCore := ${dirRoot}/core
@@ -107,9 +109,7 @@ ${dep}nodePluginPrereqs: ${coreLib} ${dep}djinni ${dep}coreNPMpkgJson
 ##	Core lib cmake dependency.
 ${dep}coreLibCmake: ${dep}coreLibPatch
 	mkdir -p ${dirCoreLibBuild}
-	cd ${dirCoreLibBuild}
-
-	cmake ${dirCoreLib}
+	cmake ${coreLibCmakeOptions} -S ${dirCoreLib} -B ${dirCoreLibBuild}
 	$(call mark,$@)
 
 ##	Djinni generation of core lib node binding sources.
