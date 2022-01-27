@@ -102,6 +102,9 @@ define mark
 	touch ${1}
 endef
 
+##	Do a nice quite `rm -rf` without any fuss.
+rmrf = rm -rf ${1} 2> /dev/null || true
+
 ##	Dependency for building the core lib node bindings.
 ${dep}nodePluginPrereqs: ${coreLib} ${dep}djinni ${dep}coreNPMpkgJson
 	$(call mark,$@)
@@ -122,7 +125,7 @@ ${dep}djinni: ${coreLib} ${dep}genBindingsScript ${coreNPMGit}
 	tools/generateBindings.sh ${dirCoreNPM} ${dirCoreLibBuild}
 
 ##	XXX Misconfiguration(?) prevents Djinni from replacing these files.
-	rm ${dirCoreNPM}/src/NJSPreferencesBackendCpp.?pp 2> /dev/null || true
+	$(call rmrf,${dirCoreNPM}/src/NJSPreferencesBackendCpp.?pp)
 ##	As advised by the core lib README, remove the files generated there.
 	git checkout -- core/src
 
