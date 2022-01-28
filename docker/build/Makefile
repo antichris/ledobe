@@ -142,6 +142,7 @@ ${dep}coreNPMpkgJson: ${dirCoreNPM}/package.json
 ##	XXX Remove this once LedgerHQ merges PR #764 (or an analogous fix).
 ${dep}coreLibPatch: ${dep}coreLibSrc
 	$(call patch,${dirCoreLib},${dirRoot}/core-lib-sha512256-portability-arm64.patch)
+	$(call mark,${dep}coreLibSrc)
 	$(call mark,$@)
 
 ${dirCoreLib}/tools/generateBindings.sh: ${coreLibGit}
