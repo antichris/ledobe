@@ -22,12 +22,7 @@ main() {
 	ln -s "$mount" "$home"
 
 	## Add to home dir what was created for it during the image build.
-	mvru /home/.ledobe "$home"
-
-	## Force everything in the home dir to be owned by the user.
-	## The trailing slash is needed because we symlinked the path earlier.
-	find "${home}/" -not -user "$USER_ID" -exec \
-		chown "$USER_ID:$GROUP_ID" {} +
+	unbundleHome /home/.ledobe "$home"
 
 	## Update build dir with what was created for it during the image build.
 	mvru "${home}/build" /build
@@ -44,6 +39,38 @@ main() {
 		echo "$@" | execGosu sh -s
 	fi
 }
+
+## Add to home dir what was created for it during the image build.
+unbundleHome() { ## (bundledHome home)
+	bundledHome="$1"
+	home="$2"
+
+	bundled="$(mktemp)"
+	untouched="$(mktemp)"
+	chownables="$(mktemp)"
+	## Record what was bundled for the home dir during the image build.
+	## TODO Move this to the image build time.
+	findNonUser "$bundledHome" > "$bundled"
+	## Update home dir with the bundled contents.
+	mvru "$bundledHome" "$home"
+	## Record which home dir files were NOT updated from the bundled ones.
+	findNonUser "$bundledHome" > "$untouched"
+	## Record which home dir files need to be `chown`ed now.
+	comm -z23 "$bundled" "$untouched" > "$chownables"
+	## Force the bundled contents of home dir to be owned by the user.
+	(
+		cd "$home" || exit
+		xargs -0a "$chownables" -I {} chown "$USER_ID:$GROUP_ID" {}
+	)
+	rm "$bundled" "$untouched" "$chownables"
+}
+
+## Output null-separated list of files that are not owned by USER_ID.
+findNonUser() ( ## (directory)
+	cd "$1" || exit
+	find . -mindepth 1 -not -user "$USER_ID" -print0 \
+		| sort -z
+)
 
 ## A recursive "mv -u", like "cp -ru" but moving instead of copying.
 mvru() { ## (source target)
