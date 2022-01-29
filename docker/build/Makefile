@@ -116,7 +116,7 @@ ${dep}coreLib/cmake: ${dep}coreLib/patch
 	$(call mark,$@)
 
 ##	Djinni generation of core lib node binding sources.
-${dep}djinni: ${coreLib} ${dep}genBindingsScript ${coreNPMGit}
+${dep}djinni: ${dep}coreLib/patch ${dep}genBindingsScript ${coreNPMGit}
 	cd ${dirCoreLib}/djinni
 	git fetch origin --prune
 	git rebase origin/master
