@@ -38,9 +38,9 @@ nodePlugin := ${dirCoreNPM}/build/Release/ledger-core-node.node
 
 dep := ${dirRoot}/.dep/
 
-desktopGit := ${dep}desktop-v/${vDesktop}
-coreLibGit := ${dep}coreLib-v/${vCoreLib}
-coreNPMGit := ${dep}coreNPM-v/${vCoreNPM}
+desktopGit := ${dep}desktop/v/${vDesktop}
+coreLibGit := ${dep}coreLib/v/${vCoreLib}
+coreNPMGit := ${dep}coreNPM/v/${vCoreNPM}
 
 ##	If a patch cannot be reversed, it MUST apply, or things are broken.
 define patch
@@ -54,7 +54,7 @@ endef
 
 desktop: ${artifact}
 ##	Ledger Live desktop application.
-${artifact}: ${desktopGit} ${dep}nodePluginPrereqs
+${artifact}: ${desktopGit} ${dep}coreNPM/prereqs
 ##	HACK Hardcoded architecture to ARM64. Needs something more flexible.
 	$(call patch,${dirDesktop},${dirRoot}/desktop-electron-builder-x64-to-arm64.patch)
 
@@ -74,7 +74,7 @@ mFlags = $(call unFlag,rR,${MFLAGS})
 
 coreLib: ${coreLib}
 ##	Ledger Live core library.
-${coreLib}: ${dep}coreLibCmake
+${coreLib}: ${dep}coreLib/cmake
 	cd ${dirCoreLibBuild}
 	$(MAKE) ${mFlags} --no-print-directory
 
@@ -82,7 +82,7 @@ ${coreLib}: ${dep}coreLibCmake
 
 coreNPM: ${nodePlugin}
 ##	Nodejs bindings for the core library.
-${nodePlugin}: ${dep}nodePluginPrereqs
+${nodePlugin}: ${dep}coreNPM/prereqs
 	cd ${dirCoreNPM}
 	yarn
 
@@ -106,11 +106,11 @@ endef
 rmrf = rm -rf ${1} 2> /dev/null || true
 
 ##	Dependency for building the core lib node bindings.
-${dep}nodePluginPrereqs: ${coreLib} ${dep}djinni ${dep}coreNPMpkgJson
+${dep}coreNPM/prereqs: ${coreLib} ${dep}djinni ${dep}coreNPM/pkgJson
 	$(call mark,$@)
 
 ##	Core lib cmake dependency.
-${dep}coreLibCmake: ${dep}coreLibPatch
+${dep}coreLib/cmake: ${dep}coreLib/patch
 	mkdir -p ${dirCoreLibBuild}
 	cmake ${coreLibCmakeOptions} -S ${dirCoreLib} -B ${dirCoreLibBuild}
 	$(call mark,$@)
@@ -133,16 +133,16 @@ ${dep}djinni: ${coreLib} ${dep}genBindingsScript ${coreNPMGit}
 
 ${dirCoreNPM}/package.json: ${coreNPMGit}
 ##	Indirect dependency, rebuilt if the file changes.
-${dep}coreNPMpkgJson: ${dirCoreNPM}/package.json
+${dep}coreNPM/pkgJson: ${dirCoreNPM}/package.json
 ##	Prevent preinstaller replacing the built core lib with a download.
 	sed -i '/"preinstall":.*preinstall.js"/d' $<
 	$(call mark,$@)
 
 ##	Patch the core lib to compile on ARM architectures.
 ##	XXX Remove this once LedgerHQ merges PR #764 (or an analogous fix).
-${dep}coreLibPatch: ${dep}coreLibSrc
+${dep}coreLib/patch: ${dep}coreLib/src
 	$(call patch,${dirCoreLib},${dirRoot}/core-lib-sha512256-portability-arm64.patch)
-	$(call mark,${dep}coreLibSrc)
+	$(call mark,${dep}coreLib/src)
 	$(call mark,$@)
 
 ${dirCoreLib}/tools/generateBindings.sh: ${coreLibGit}
@@ -165,7 +165,7 @@ endef
 
 ##	File system dependency on core lib sources (without Djinni output).
 ##	BUG Can only ever findCoreSrc AFTER ${coreLibGit} is satisfied: parallel execution is flaky.
-${dep}coreLibSrc: ${coreLibGit} $(shell $(call findCoreSrc,${dirCoreLibSrc}))
+${dep}coreLib/src: ${coreLibGit} $(shell $(call findCoreSrc,${dirCoreLibSrc}))
 	$(call mark,$@)
 
 
