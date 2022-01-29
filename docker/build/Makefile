@@ -24,11 +24,11 @@ dirRoot := ${PWD}
 dirDesktop := ${dirRoot}/desktop
 dirCore := ${dirRoot}/core
 
-coreLibSrc=/core/src
+coreLibSrc=core/src
 dirCoreLib := ${dirCore}/lib
-dirCoreLibSrc := ${dirCoreLib}${coreLibSrc}
+dirCoreLibSrc := ${dirCoreLib}/${coreLibSrc}
 dirCoreLibBuild := ${dirCoreLib}/build
-dirCoreLibDist := ${dirCoreLibBuild}${coreLibSrc}
+dirCoreLibDist := ${dirCoreLibBuild}/${coreLibSrc}
 
 dirCoreNPM := ${dirCore}/node-bindings
 
@@ -127,7 +127,7 @@ ${dep}djinni: ${coreLib} ${dep}genBindingsScript ${coreNPMGit}
 ##	XXX Misconfiguration(?) prevents Djinni from replacing these files.
 	$(call rmrf,${dirCoreNPM}/src/NJSPreferencesBackendCpp.?pp)
 ##	As advised by the core lib README, remove the files generated there.
-	git checkout -- core/src
+	git checkout -- ${coreLibSrc}
 
 	$(call mark,$@)
 
