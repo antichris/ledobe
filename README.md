@@ -136,11 +136,27 @@ The following sections contain a brief overview of the explicit targets currentl
 
 ## Troubleshooting
 
+### Building stuff
+
+1. #### "No rule to make target" when building the core library
+
+	When you switch versions, `make` may abort a core lib build with a message like
+
+	```text
+	make: *** No rule to make target '/build/core/lib/core/src/(some/filename).cpp', needed by '/build/.dep/coreLib/src'.  Stop.
+	```
+
+	This can happen when `make` has cached the stats of the core lib source files used during the previous build, but some of them are missing from this new version.
+
+	Solution: simply try again. The second run will succeed.
+
+### Running stuff
+
 Even though the runtime portion of Ledger Live is outside the scope of this project, users have been encountering the same problems frequently enough to warrant a few words on dealing with them.
 
 Unless you can also provide solutions that must be a part of this build environment, please, do not create additional issue reports for the Ledger Live runtime problems outlined below.
 
-1. ### Missing `libz.so`
+1. #### Missing `libz.so`
 
 	```text
 	error while loading shared libraries: libz.so: cannot open shared object file: No such file or directory
@@ -153,7 +169,7 @@ Unless you can also provide solutions that must be a part of this build environm
 	- symlink `/lib/aarch64-linux-gnu/libz.so.1` to `libz.so` in the same directory, or
 	- install the `zlib1g-dev` package (or the equivalent on your distribution).
 
-2. ### Unable to connect the physical device
+2. #### Unable to connect the physical device
 
 	This issue with Ledger Live seems to be [common enough][undetected] for their official support site to offer [tips on dealing with it][tips]. If none of those work for you, consider contributing your own solution to Ledger Live.
 
@@ -167,8 +183,8 @@ The source code of this project is released under [Mozilla Public License Versio
 [ledgerhq]: https://github.com/LedgerHQ
 	"Ledger"
 
-[Troubleshooting]: #troubleshooting
-	"Troubleshooting"
+[Troubleshooting]: #running-stuff
+	"Troubleshooting ❭ Running stuff"
 
 [jobs]: #jobs
 	"Operation ❭ Details ❭ Jobs"
