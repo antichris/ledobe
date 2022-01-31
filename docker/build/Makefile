@@ -174,7 +174,7 @@ coreNPMGitHEAD := ${dirCoreNPM}/.git/HEAD
 ${desktopGitHEAD}:
 	git clone https://github.com/LedgerHQ/ledger-live-desktop.git ${dirDesktop}
 ${desktopGit}: ${desktopGitHEAD}
-	git -C ${dirDesktop} checkout -f v${vDesktop}
+	git -C ${dirDesktop} checkout -f v${vDesktop} --
 	$(call rmrf,$(@D))
 	$(call mark,$@)
 
@@ -182,7 +182,7 @@ gitCoreLib := git -C ${dirCoreLib}
 ${coreLibGitHEAD}:
 	git clone --recurse-submodules https://github.com/LedgerHQ/lib-ledger-core.git ${dirCoreLib}
 ${coreLibGit}: ${coreLibGitHEAD}
-	${gitCoreLib} checkout -f ${vCoreLib}
+	${gitCoreLib} checkout -f ${vCoreLib} --
 	${gitCoreLib} submodule init
 	${gitCoreLib} submodule update
 	$(call rmrf,$(@D))
@@ -191,7 +191,7 @@ ${coreLibGit}: ${coreLibGitHEAD}
 ${coreNPMGitHEAD}:
 	git clone https://github.com/LedgerHQ/lib-ledger-core-node-bindings.git ${dirCoreNPM}
 ${coreNPMGit}: ${coreNPMGitHEAD}
-	git -C ${dirCoreNPM} checkout -f ${vCoreNPM}
+	git -C ${dirCoreNPM} checkout -f ${vCoreNPM} --
 	$(call rmrf,$(@D))
 	$(call mark,$@)
 
