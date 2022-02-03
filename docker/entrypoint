@@ -45,12 +45,9 @@ unbundleHome() { ## (bundledHome home)
 	bundledHome="$1"
 	home="$2"
 
-	bundled="$(mktemp)"
+	bundled=/.ledobe-manifest-home
 	untouched="$(mktemp)"
 	chownables="$(mktemp)"
-	## Record what was bundled for the home dir during the image build.
-	## TODO Move this to the image build time.
-	findNonUser "$bundledHome" > "$bundled"
 	## Update home dir with the bundled contents.
 	mvru "$bundledHome" "$home"
 	## Record which home dir files were NOT updated from the bundled ones.
@@ -62,7 +59,7 @@ unbundleHome() { ## (bundledHome home)
 		cd "$home" || exit
 		xargs -0a "$chownables" -I {} chown "$USER_ID:$GROUP_ID" {}
 	)
-	rm "$bundled" "$untouched" "$chownables"
+	rm "$untouched" "$chownables"
 }
 
 ## Output null-separated list of files that are not owned by USER_ID.
