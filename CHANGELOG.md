@@ -2,6 +2,30 @@
 
 This project adheres to [Semantic Versioning][semver2].
 
+## 0.3.0
+
+### Added
+
+- Automatic Git fetch whenever a component version is changed in the Makefile
+- Manifests of bundled contents for the `build` and `home` directories in the final image, created during the `aggregate` stage
+- Solution for "No rule to make target" error when building core lib to the `README`
+
+### Changed
+
+- Makefile recipe for Djinni not to remove the files it generates in the core lib
+- The `aggregate` stage of Dockerfile:
+	- To support running commands by being based of the `base` image
+	- To gather the files for the final stage under a sub-directory (instead of root)
+- Order of directives in the `aggregate` stage to reduce the potential for build cache misses caused by `ENV` variable value changes
+- Names of `make` dependency sentinels to form a directory structure
+
+### Fixed
+
+- Git checkouts of each component in Makefile to use the respective version variable as a ref explicitly, instead of trying to check out a file if the ref is not valid
+- Dockerfile to prepare a manifest of the `home` directory bundled contents during the `aggregate` build stage, instead of generating in the Docker `entrypoint` every time a container starts
+- Makefile recipe for Djinni to depend on the core lib sources alone, without building the core lib binary
+
+
 ## 0.2.0
 
 ### Added
