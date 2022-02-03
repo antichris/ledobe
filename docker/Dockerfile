@@ -97,7 +97,7 @@ RUN /prompt-setup /etc/skel/.bashrc
 ##
 ##  Aggregate stage (aggregates files for copying into the final image).
 ##
-FROM scratch AS aggregate
+FROM base AS aggregate
 
 ENV DEST_ROOT=/agr \
     OPTDIR=/usr/local/lib
@@ -118,6 +118,14 @@ COPY --from=node-dl /.npm "${HOME}/.npm"
 
 COPY build "${HOME}/build"
 COPY entrypoint "${DEST_ROOT}/usr/bin/entrypoint"
+
+##  It's simpler to change dir in the same layer as many times as we need.
+#   hadolint ignore=DL3003,DL4006
+RUN set -x \
+&&  cd "${HOME}" \
+&&  find . -mindepth 1 -print0 | sort -z \
+>   "${DEST_ROOT}/.ledobe-manifest-home" \
+&&  :
 
 FROM base AS final
 
