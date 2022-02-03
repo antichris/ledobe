@@ -99,11 +99,13 @@ RUN /prompt-setup /etc/skel/.bashrc
 ##
 FROM scratch AS aggregate
 
-ENV OPTDIR=/usr/local/lib \
-    HOME=/home/.ledobe
+ENV OPTDIR=/usr/local/lib
 
 COPY --from=node-dl --chown=0:0 "$OPTDIR" "$OPTDIR"
 COPY --from=sbt-dl --chown=0:0 "$OPTDIR" "$OPTDIR"
+
+ENV HOME=/home/.ledobe
+
 COPY --from=sbt-dl /root/.sbt "${HOME}/.sbt"
 COPY --from=sbt-dl /root/.ivy2 "${HOME}/.ivy2"
 
