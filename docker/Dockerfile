@@ -106,7 +106,8 @@ ENV DEST_OPTDIR="${DEST_ROOT}${OPTDIR}"
 COPY --from=node-dl --chown=0:0 "$OPTDIR" "${DEST_OPTDIR}"
 COPY --from=sbt-dl --chown=0:0 "$OPTDIR" "${DEST_OPTDIR}"
 
-ENV HOME="${DEST_ROOT}/home/.ledobe"
+ENV BUNDLE_ROOT="${DEST_ROOT}/.ledobe"
+ENV HOME="${BUNDLE_ROOT}/home"
 
 COPY --from=sbt-dl /root/.sbt "${HOME}/.sbt"
 COPY --from=sbt-dl /root/.ivy2 "${HOME}/.ivy2"
@@ -116,15 +117,17 @@ COPY --chown=0:0 npmrc "${DEST_ROOT}/etc/skel/.npmrc"
 COPY --chown=0:0 home-npm.sh "${DEST_ROOT}/etc/profile.d/"
 COPY --from=node-dl /.npm "${HOME}/.npm"
 
-COPY build "${HOME}/build"
+COPY build "${BUNDLE_ROOT}/build"
 COPY entrypoint "${DEST_ROOT}/usr/bin/entrypoint"
 
 ##  It's simpler to change dir in the same layer as many times as we need.
 #   hadolint ignore=DL3003,DL4006
 RUN set -x \
-&&  cd "${HOME}" \
-&&  find . -mindepth 1 -print0 | sort -z \
->   "${DEST_ROOT}/.ledobe-manifest-home" \
+&&  for resource in build home; do \
+        cd "${BUNDLE_ROOT}/${resource}" \
+    &&  find . -mindepth 1 -print0 | sort -z \
+    >   "${BUNDLE_ROOT}/manifest-${resource}" \
+;   done \
 &&  :
 
 FROM base AS final

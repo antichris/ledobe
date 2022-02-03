@@ -22,10 +22,10 @@ main() {
 	ln -s "$mount" "$home"
 
 	## Add to home dir what was created for it during the image build.
-	unbundleHome /home/.ledobe "$home"
+	unbundle home "$home"
 
 	## Update build dir with what was created for it during the image build.
-	mvru "${home}/build" /build
+	unbundle build /build
 
 	# shellcheck disable=SC1091
 	## Set up NPM to work off the home dir instead of node installation dir.
@@ -40,23 +40,26 @@ main() {
 	fi
 }
 
-## Add to home dir what was created for it during the image build.
-unbundleHome() { ## (bundledHome home)
-	bundledHome="$1"
-	home="$2"
+## Add to dest dir what was created for it during the image build.
+unbundle() { ## (bundled destDir)
+	bundled="$1"
+	destDir="$2"
 
-	bundled=/.ledobe-manifest-home
+	bundleRoot=/.ledobe
+	bundledDir="${bundleRoot}/${bundled}"
+	manifest="${bundleRoot}/manifest-${bundled}"
+
 	untouched="$(mktemp)"
 	chownables="$(mktemp)"
-	## Update home dir with the bundled contents.
-	mvru "$bundledHome" "$home"
-	## Record which home dir files were NOT updated from the bundled ones.
-	findNonUser "$bundledHome" > "$untouched"
-	## Record which home dir files need to be `chown`ed now.
-	comm -z23 "$bundled" "$untouched" > "$chownables"
-	## Force the bundled contents of home dir to be owned by the user.
+	## Update dest dir with the bundled contents.
+	mvru "$bundledDir" "$destDir"
+	## Record which dest dir files were NOT updated from the bundled ones.
+	findNonUser "$bundledDir" > "$untouched"
+	## Record which dest dir files need to be `chown`ed now.
+	comm -z23 "$manifest" "$untouched" > "$chownables"
+	## Force the bundled contents of dest dir to be owned by the user.
 	(
-		cd "$home" || exit
+		cd "$destDir" || exit
 		xargs -0a "$chownables" -I {} chown "$USER_ID:$GROUP_ID" {}
 	)
 	rm "$untouched" "$chownables"
