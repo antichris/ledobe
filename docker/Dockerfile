@@ -99,23 +99,25 @@ RUN /prompt-setup /etc/skel/.bashrc
 ##
 FROM scratch AS aggregate
 
-ENV OPTDIR=/usr/local/lib
+ENV DEST_ROOT=/agr \
+    OPTDIR=/usr/local/lib
+ENV DEST_OPTDIR="${DEST_ROOT}${OPTDIR}"
 
-COPY --from=node-dl --chown=0:0 "$OPTDIR" "$OPTDIR"
-COPY --from=sbt-dl --chown=0:0 "$OPTDIR" "$OPTDIR"
+COPY --from=node-dl --chown=0:0 "$OPTDIR" "${DEST_OPTDIR}"
+COPY --from=sbt-dl --chown=0:0 "$OPTDIR" "${DEST_OPTDIR}"
 
-ENV HOME=/home/.ledobe
+ENV HOME="${DEST_ROOT}/home/.ledobe"
 
 COPY --from=sbt-dl /root/.sbt "${HOME}/.sbt"
 COPY --from=sbt-dl /root/.ivy2 "${HOME}/.ivy2"
 
-COPY --from=prompt-setup /etc/skel/.bashrc /etc/skel/
-COPY --chown=0:0 npmrc /etc/skel/.npmrc
-COPY --chown=0:0 home-npm.sh /etc/profile.d/
+COPY --from=prompt-setup /etc/skel/.bashrc "${DEST_ROOT}/etc/skel/"
+COPY --chown=0:0 npmrc "${DEST_ROOT}/etc/skel/.npmrc"
+COPY --chown=0:0 home-npm.sh "${DEST_ROOT}/etc/profile.d/"
 COPY --from=node-dl /.npm "${HOME}/.npm"
 
 COPY build "${HOME}/build"
-COPY entrypoint /usr/bin/entrypoint
+COPY entrypoint "${DEST_ROOT}/usr/bin/entrypoint"
 
 FROM base AS final
 
@@ -150,7 +152,7 @@ RUN set -x \
     >> /etc/ssh/ssh_known_hosts \
 &&  :
 
-COPY --from=aggregate / /
+COPY --from=aggregate /agr /
 
 ENV PATH="${PATH}:/usr/local/lib/sbt/bin:/usr/local/lib/node/bin"
 
