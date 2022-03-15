@@ -63,7 +63,7 @@ ${artifact}: ${desktopGit} ${dep}coreNPM/prereqs
 	sed -Ei '\#^\s+"@ledgerhq/ledger-core":\s+"${vCoreNPM}",$$#s#${vCoreNPM}#file:${dirCoreNPM}#' \
 		package.json
 
-	yarn
+	yarn --network-timeout 300000
 ##	--dirty to avoid double build (above needed for dist to work at all).
 	yarn dist --dirty
 
