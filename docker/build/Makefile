@@ -124,9 +124,6 @@ ${dep}djinni: ${dep}coreLib/patch ${dep}genBindingsScript ${coreNPMGit}
 	cd ${dirCoreLib}
 	tools/generateBindings.sh ${dirCoreNPM} ${dirCoreLibBuild}
 
-##	XXX Misconfiguration(?) prevents Djinni from replacing these files.
-	$(call rmrf,${dirCoreNPM}/src/NJSPreferencesBackendCpp.?pp)
-
 	$(call mark,$@)
 
 ${dirCoreNPM}/package.json: ${coreNPMGit}
