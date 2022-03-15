@@ -14,7 +14,7 @@ ifdef SHVERBOSE
 endif
 
 ##	These values switch component versions. Will trigger rebuilds when changed.
-vDesktop := 2.37.2
+vDesktop := 2.39.2
 vCoreLib := 661687f805f7d447ec5e9aeb010a805ae53744ff # "3.5.0-rc-661687"
 vCoreNPM := 6.14.5
 
