@@ -15,7 +15,7 @@ endif
 
 ##	These values switch component versions. Will trigger rebuilds when changed.
 vDesktop := 2.37.2
-vCoreLib := 845b1b6fae6756fc82e67a28a64cc58e921ea2b1 # "4.2.0-rc-845b1b"
+vCoreLib := 661687f805f7d447ec5e9aeb010a805ae53744ff # "3.5.0-rc-661687"
 vCoreNPM := 6.14.5
 
 coreLibCmakeOptions := -DBUILD_TESTS=OFF
