@@ -191,7 +191,7 @@ ${coreNPMGitHEAD}:
 	git clone https://github.com/LedgerHQ/lib-ledger-core-node-bindings.git ${dirCoreNPM}
 ${coreNPMGit}: ${coreNPMGitHEAD}
 	git -C ${dirCoreNPM} fetch
-	git -C ${dirCoreNPM} checkout -f ${vCoreNPM} --
+	git -C ${dirCoreNPM} checkout -f v${vCoreNPM} --
 	$(call rmrf,$(@D))
 	$(call mark,$@)
 
