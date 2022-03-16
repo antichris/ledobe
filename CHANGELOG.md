@@ -2,6 +2,26 @@
 
 This project adheres to [Semantic Versioning][semver2].
 
+
+## 0.4.0
+
+### Fixed
+
+- Core lib Node bindings to use the `v`-prefixed tag, as [`v6.14.5`](https://github.com/LedgerHQ/lib-ledger-core-node-bindings/releases/tag/v6.14.5) points to a newer commit than [`6.14.5`](https://github.com/LedgerHQ/lib-ledger-core-node-bindings/releases/tag/6.14.5)
+- Makefile recipe for Djinni not to remove `NJSPreferencesBackendCpp.?pp` files, of which there used to be two conflicting versions generated, with discrepant file name capitalization
+- Yarn timing out during Desktop builds by increasing its network timeout to 5 minutes
+
+### Updated
+
+- Ledger Live components:
+	- Desktop to `2.39.2`
+	- core lib bindings for Node.js to `v6.14.5` (note the "`v`")
+
+### Downgraded
+
+- Ledger Live core lib to [`3.5.0-rc-661687`](https://github.com/LedgerHQ/lib-ledger-core-node-bindings/blob/v6.14.5/package.json#L4)
+
+
 ## 0.3.0
 
 ### Added
